@@ -9,7 +9,7 @@ import java.util.regex.Pattern;
 
 public class DanishCprValidator implements ConstraintValidator<ValidDanishCpr, String> {
     private static final Pattern CPR_REGEX_PATTERN = Pattern.compile("^([0-9]{10})$");
-
+    private static final LocalDate EARLIEST_VALID_DATE = LocalDate.of(1900, 1, 1);
     @Override
     public boolean isValid(String value, ConstraintValidatorContext context) {
 
@@ -22,18 +22,26 @@ public class DanishCprValidator implements ConstraintValidator<ValidDanishCpr, S
             return false;
         }
 
-        String dateString = matcher.group(1);
+        var dateString = value.substring(0, 7);
         return isValidDate(dateString);
     }
 
     private boolean isValidDate(String dateString) {
         try {
-            // Parse as ddMMyy
-            LocalDate.parse(dateString, DateTimeFormatter.ofPattern("ddMMyy"));
-            return true;
+            LocalDate birthDate = LocalDate.parse(dateString, DateTimeFormatter.ofPattern("ddMMyy"));
+            LocalDate adjustedBirthDate = adjustYearIfNeeded(birthDate);
+            return adjustedBirthDate.isAfter(EARLIEST_VALID_DATE) &&
+                    adjustedBirthDate.isBefore(LocalDate.now().plusDays(1));
         } catch (DateTimeParseException e) {
             return false;
         }
+    }
+
+    private LocalDate adjustYearIfNeeded(LocalDate date) {
+        if (date.isAfter(LocalDate.now())) {
+            return date.minusYears(100);
+        }
+        return date;
     }
 }
 

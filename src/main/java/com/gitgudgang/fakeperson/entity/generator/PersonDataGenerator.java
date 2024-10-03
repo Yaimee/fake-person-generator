@@ -2,23 +2,33 @@ package com.gitgudgang.fakeperson.entity.generator;
 
 import com.gitgudgang.fakeperson.entity.Address;
 import com.gitgudgang.fakeperson.repository.NameGenderRepository;
-import com.gitgudgang.fakeperson.repository.PostalCodeTownRepository;
 import com.gitgudgang.fakeperson.service.PersonService;
 import org.springframework.stereotype.Service;
-
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.Random;
 
 @Service
 public class PersonDataGenerator {
-    private NameGenderRepository nameGenderRepository;
-    private PostalCodeTownRepository postalCodeTownRepository;
+    //private NameGenderRepository nameGenderRepository;
 
-    public String generateCpr(String gender) {
-        return null;
+    private final Random random = new Random();
+
+    public String generateCpr(String gender, LocalDate dob) {
+        var dateString = dob.format(DateTimeFormatter.ofPattern("ddMMyy"));
+        StringBuilder cpr = new StringBuilder(dateString);
+        for (int i = 0; i < 3; i++) {
+            cpr.append(random.nextInt(10));
+        }
+        var lastDigit = gender.equalsIgnoreCase("female") ? random.nextInt(5) * 2 : random.nextInt(5) * 2 + 1;
+        return cpr.append(lastDigit).toString();
     }
 
     public LocalDate generateDateOfBirth() {
-        return null;
+        LocalDate now = LocalDate.now();
+        var minDay = LocalDate.of(1910, 1, 1).toEpochDay();
+        var maxDay = now.toEpochDay();
+        return LocalDate.ofEpochDay(minDay + random.nextLong(maxDay - minDay + 1));
     }
 
     public int generatePhoneNumber() {

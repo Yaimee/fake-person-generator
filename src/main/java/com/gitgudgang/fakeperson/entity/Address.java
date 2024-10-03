@@ -1,23 +1,29 @@
 package com.gitgudgang.fakeperson.entity;
 
-import com.gitgudgang.fakeperson.repository.PostalCodeTownRepository;
-import com.github.javafaker.Faker;
 import jakarta.persistence.Embeddable;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.util.UUID;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Embeddable
+@Entity
 public class Address {
-    private PostalCodeTownRepository postalCodeTownRepository;
-    private final Faker faker = new Faker();
+
+    @Id
+    @GeneratedValue
+    private UUID id;
 
     private String postalCode;
     private String town;
-    private String street = faker.regexify("[a-zA-Z]+]");
+    private String street;
     private int houseNumber;
     private String floor;
     private String door;

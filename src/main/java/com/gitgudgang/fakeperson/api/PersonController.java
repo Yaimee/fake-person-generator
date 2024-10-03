@@ -1,6 +1,7 @@
 package com.gitgudgang.fakeperson.api;
 
-import com.gitgudgang.fakeperson.dto.PersonDTO;
+import com.gitgudgang.fakeperson.dto.PersonDTO.FullPersonDTO;
+import com.gitgudgang.fakeperson.dto.PersonDTO.PartialPersonData;
 import com.gitgudgang.fakeperson.service.PersonService;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
@@ -15,17 +16,12 @@ public class PersonController {
     }
 
     @GetMapping("/{dtoType}")
-    public PersonDTO.PartialPersonData getPartialPersonData(@PathVariable String dtoType) {
-        return personService.generatePartialPersonData(dtoType);
-    }
-
-    @GetMapping("/single")
-    public PersonDTO.FullPersonDTO getSinglePerson() {
-        return personService.generateFullPerson();
+    public PartialPersonData getPartialPersonData(@PathVariable String dtoType) {
+        return personService.generatePersonData(dtoType);
     }
 
     @GetMapping("/bulk")
-    public List<PersonDTO.FullPersonDTO> getBulkPersons(@RequestParam(defaultValue = "10") int count) {
+    public List<FullPersonDTO> getBulkPersons(@RequestParam(defaultValue = "10") int count) {
         return null;
     }
 }
