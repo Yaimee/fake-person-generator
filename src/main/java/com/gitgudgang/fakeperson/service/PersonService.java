@@ -1,12 +1,13 @@
 package com.gitgudgang.fakeperson.service;
 
+import com.gitgudgang.fakeperson.domain.Address;
+import com.gitgudgang.fakeperson.domain.Person;
+import com.gitgudgang.fakeperson.domain.generator.PersonDataGenerator;
 import com.gitgudgang.fakeperson.dto.PersonDtoType;
-import com.gitgudgang.fakeperson.entity.Address;
-import com.gitgudgang.fakeperson.entity.Person;
-import com.gitgudgang.fakeperson.entity.generator.PersonDataGenerator;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+
 import java.time.LocalDate;
 import java.util.List;
 
@@ -49,9 +50,11 @@ public class PersonService {
         return switch (PersonDtoType.valueOf(type.toUpperCase())) {
             case CPR_DTO -> modelMapper.map(generateFullPerson(), PartialPersonData.class);
             case FIRST_NAME_LAST_NAME_CPR_DTO -> modelMapper.map(generateFullPerson(), NameCprDTO.class);
-            case FIRST_NAME_LAST_NAME_CPR_DATE_OF_BIRTH_DTO -> modelMapper.map(generateFullPerson(), NameCprDobDTO.class);
+            case FIRST_NAME_LAST_NAME_CPR_DATE_OF_BIRTH_DTO ->
+                    modelMapper.map(generateFullPerson(), NameCprDobDTO.class);
             case CPR_FIRST_NAME_LAST_NAME_GENDER_DTO -> modelMapper.map(generateFullPerson(), CprNameGenderDTO.class);
-            case CPR_FIRST_NAME_LAST_NAME_GENDER_DATE_OF_BIRTH_DTO -> modelMapper.map(generateFullPerson(), CprNameGenderDobDTO.class);
+            case CPR_FIRST_NAME_LAST_NAME_GENDER_DATE_OF_BIRTH_DTO ->
+                    modelMapper.map(generateFullPerson(), CprNameGenderDobDTO.class);
             case ADDRESS_DTO -> modelMapper.map(dataGenerator.generateAddress(), AddressDTO.class);
             case PHONE_DTO -> modelMapper.map(dataGenerator.generatePhoneNumber(), PhoneDTO.class);
             default -> throw new IllegalArgumentException("Unsupported DTO type: " + type);

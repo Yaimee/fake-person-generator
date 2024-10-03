@@ -1,6 +1,5 @@
-package com.gitgudgang.fakeperson.entity.generator;
+package com.gitgudgang.fakeperson.domain.generator;
 
-import com.gitgudgang.fakeperson.repository.PostalCodeTownRepository;
 import com.github.javafaker.Faker;
 import org.springframework.stereotype.Service;
 

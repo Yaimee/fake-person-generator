@@ -1,12 +1,16 @@
-package com.gitgudgang.fakeperson.entity;
+package com.gitgudgang.fakeperson.domain;
 
 import com.gitgudgang.fakeperson.validator.ValidDanishCpr;
 import com.gitgudgang.fakeperson.validator.ValidDanishPhoneNumber;
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToOne;
 import jakarta.validation.constraints.Past;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;
+
 import java.time.LocalDate;
 import java.util.UUID;
 

@@ -1,4 +1,4 @@
-package com.gitgudgang.fakeperson.entity;
+package com.gitgudgang.fakeperson.domain;
 
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.Entity;

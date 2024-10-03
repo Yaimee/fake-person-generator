@@ -1,9 +1,9 @@
-package com.gitgudgang.fakeperson.entity.generator;
+package com.gitgudgang.fakeperson.domain.generator;
 
-import com.gitgudgang.fakeperson.entity.Address;
-import com.gitgudgang.fakeperson.repository.NameGenderRepository;
+import com.gitgudgang.fakeperson.domain.Address;
 import com.gitgudgang.fakeperson.service.PersonService;
 import org.springframework.stereotype.Service;
+
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Random;
