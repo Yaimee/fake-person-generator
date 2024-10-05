@@ -1,5 +1,6 @@
 package com.gitgudgang.fakeperson.entity;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
@@ -17,9 +18,11 @@ public class NameGender {
     @GeneratedValue
     private UUID id;
 
-    String name;
+    @Column(name = "name")
+    private String firstName;
 
-    String surname;
+    @Column(name = "surname")
+    private String lastName;
 
-    String gender;
+    private String gender;
 }

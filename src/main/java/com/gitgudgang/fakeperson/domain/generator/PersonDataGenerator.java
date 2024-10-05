@@ -8,38 +8,70 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Random;
 
+import static com.gitgudgang.fakeperson.config.CPRConstants.CENTURY_CODE_1900;
+import static com.gitgudgang.fakeperson.config.CPRConstants.CENTURY_CODE_2000;
+
 @Service
 public class PersonDataGenerator {
-    //private NameGenderRepository nameGenderRepository;
-
+    private static final LocalDate EARLIEST_VALID_DATE = LocalDate.of(1924, 1, 1);
     private final Random random = new Random();
 
     public String generateCpr(String gender, LocalDate dob) {
-        var dateString = dob.format(DateTimeFormatter.ofPattern("ddMMyy"));
-        StringBuilder cpr = new StringBuilder(dateString);
-        for (int i = 0; i < 3; i++) {
-            cpr.append(random.nextInt(10));
+        if (!isValidDOB(dob)) {
+            throw new IllegalArgumentException("Invalid date of birth");
         }
-        var lastDigit = gender.equalsIgnoreCase("female") ? random.nextInt(5) * 2 : random.nextInt(5) * 2 + 1;
-        return cpr.append(lastDigit).toString();
+
+        String dateString = dob.format(DateTimeFormatter.ofPattern("ddMMyy"));
+        String sequenceNumber = generateSequenceNumber(gender, dob);
+        return dateString + sequenceNumber;
+    }
+
+    private static boolean isValidDOB(LocalDate dob) {
+        return dob.isAfter(EARLIEST_VALID_DATE.minusDays(1)) && dob.isBefore(LocalDate.now());
+    }
+
+    private String generateSequenceNumber(String gender, LocalDate dob) {
+        int firstDigit = generateFirstDigitOfSequence(dob);
+
+        StringBuilder sequence = new StringBuilder(String.valueOf(firstDigit));
+        for (int i = 0; i < 2; i++) {
+            sequence.append(random.nextInt(10));
+        }
+
+        int lastDigit = generateLastDigitOfSequence(gender);
+
+        return sequence.append(lastDigit).toString();
+    }
+
+    private int generateFirstDigitOfSequence(LocalDate dob) {
+        int century = dob.getYear() / 100;
+        return switch (century) {
+            case 19 -> CENTURY_CODE_1900.get(random.nextInt(CENTURY_CODE_1900.size()));
+            case 20 -> CENTURY_CODE_2000.get(random.nextInt(CENTURY_CODE_2000.size()));
+            default -> throw new IllegalArgumentException("Unsupported century");
+        };
+    }
+
+    private int generateLastDigitOfSequence(String gender) {
+        return gender.equalsIgnoreCase("female") ?
+                random.nextInt(5) * 2 : random.nextInt(5) * 2 + 1;
     }
 
     public LocalDate generateDateOfBirth() {
-        LocalDate now = LocalDate.now();
-        var minDay = LocalDate.of(1910, 1, 1).toEpochDay();
-        var maxDay = now.toEpochDay();
+        var minDay = EARLIEST_VALID_DATE.toEpochDay();
+        var maxDay = LocalDate.now().toEpochDay();
         return LocalDate.ofEpochDay(minDay + random.nextLong(maxDay - minDay + 1));
     }
 
     public int generatePhoneNumber() {
-        return 0;
+        return 0; // TODO: Implement phone number generation
     }
 
     public Address generateAddress() {
-        return null;
+        return null; // TODO: Implement address generation
     }
 
     public PersonService.PersonBaseData generatePersonBaseData() {
-        return null;
+        return null; // TODO: Implement person base data generation
     }
 }

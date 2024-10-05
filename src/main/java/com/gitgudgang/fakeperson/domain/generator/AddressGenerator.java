@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class AddressGenerator {
 
-    //private PostalCodeTownRepository postalCodeTownRepository;
+
     private final Faker faker = new Faker();
 
     private String generateStreetName() {

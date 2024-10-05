@@ -1,7 +1,5 @@
 package com.gitgudgang.fakeperson.domain;
 
-import com.gitgudgang.fakeperson.validator.ValidDanishCpr;
-import com.gitgudgang.fakeperson.validator.ValidDanishPhoneNumber;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
@@ -33,12 +31,10 @@ public class Person {
     @DateTimeFormat(pattern = "dd/MM/yyyy")
     private LocalDate dateOfBirth;
 
-    @ValidDanishCpr
     private String cpr;
 
     @OneToOne
     private Address address;
 
-    @ValidDanishPhoneNumber
     private int phoneNumber;
 }
