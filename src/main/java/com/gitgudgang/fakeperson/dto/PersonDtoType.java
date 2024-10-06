@@ -17,10 +17,6 @@ public enum PersonDtoType {
         this.dtoTypeText = dtoTypeText;
     }
 
-    public String getDtoTypeText() {
-        return dtoTypeText;
-    }
-
     public static PersonDtoType fromString(String text) {
         for (PersonDtoType type : PersonDtoType.values()) {
             if (type.dtoTypeText.equalsIgnoreCase(text)) {

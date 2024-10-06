@@ -17,10 +17,11 @@ public class PersonDTO {
     }
     public record AddressDTO(
             String street,
-            String houseNumber,
-            String apartment,
-            String postalCode,
-            String townName
+            int houseNumber,
+            String floor,
+            String door,
+            int postalCode,
+            String town
     ) implements PartialPersonData {}
     public record PhoneDTO(int phoneNumber) implements PartialPersonData {}
     public record FullPersonDTO(

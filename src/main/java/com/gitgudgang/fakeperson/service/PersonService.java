@@ -1,7 +1,7 @@
 package com.gitgudgang.fakeperson.service;
 
-import com.gitgudgang.fakeperson.domain.Address;
 import com.gitgudgang.fakeperson.domain.Person;
+import com.gitgudgang.fakeperson.domain.generator.AddressGenerator;
 import com.gitgudgang.fakeperson.domain.generator.PersonDataGenerator;
 import com.gitgudgang.fakeperson.dto.PersonDtoType;
 import com.gitgudgang.fakeperson.entity.NameGender;
@@ -11,7 +11,6 @@ import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -23,27 +22,29 @@ import static com.gitgudgang.fakeperson.dto.PersonDTO.PartialPersonData;
 @Setter
 @Service
 public class PersonService {
-    private PersonDataGenerator dataGenerator;
+    private PersonDataGenerator personGenerator;
+    private AddressGenerator addressGenerator;
     private PersonMapper personMapper;
 
     @Autowired
-    public PersonService(PersonDataGenerator dataGenerator, PersonMapper personMapper) {
-        this.dataGenerator = dataGenerator;
+    public PersonService(PersonDataGenerator personGenerator, AddressGenerator addressGenerator, PersonMapper personMapper) {
+        this.personGenerator = personGenerator;
+        this.addressGenerator = addressGenerator;
         this.personMapper = personMapper;
     }
 
     private Person generateFullPerson() {
-        NameGender nameGender = dataGenerator.generatePersonBaseData().orElseThrow();
-        var dob = dataGenerator.generateDateOfBirth();
+        NameGender nameGender = personGenerator.generatePersonBaseData().orElseThrow();
+        var dob = personGenerator.generateDateOfBirth();
 
         Person person = new Person();
         person.setFirstName(nameGender.getFirstName());
         person.setLastName(nameGender.getLastName());
         person.setGender(nameGender.getGender());
         person.setDateOfBirth(dob);
-        person.setCpr(generateCpr(nameGender.getGender(), dob));
-        person.setAddress(new Address()); //TODO: Make return actual address
-        person.setPhoneNumber(dataGenerator.generatePhoneNumber());
+        person.setCpr(personGenerator.generateCpr(nameGender.getGender(), dob));
+        person.setAddress(addressGenerator.generateAddress());
+        person.setPhoneNumber(personGenerator.generatePhoneNumber()); //TODO: Make return actual phone number
 
         return person;
     }
@@ -56,7 +57,7 @@ public class PersonService {
             case CPR_FIRST_NAME_LAST_NAME_GENDER_DTO -> personMapper.personToCprNameGenderDTO(generateFullPerson());
             case CPR_FIRST_NAME_LAST_NAME_GENDER_DATE_OF_BIRTH_DTO ->
                     personMapper.personToCprNameGenderDobDTO(generateFullPerson());
-            case ADDRESS_DTO -> personMapper.addressToAddressDTO(dataGenerator.generateAddress());
+            case ADDRESS_DTO -> personMapper.addressToAddressDTO(generateFullPerson().getAddress());
             case PHONE_DTO -> personMapper.personToPhoneDTO(generateFullPerson());
             case SINGLE_PERSON_DTO -> personMapper.personToFullPersonDTO(generateFullPerson());
             default -> throw new IllegalArgumentException("Unsupported DTO type: " + type);
@@ -64,18 +65,12 @@ public class PersonService {
     }
 
     public List<FullPersonDTO> generatePersonList() {
-        // random int between 2 and 100
         var index = new Random().nextInt(2, 100);
         var persons = new ArrayList<Person>();
 
-        // generateFullPerson() and map to dto until list is full
         for (int i = 2; i < index; i++) {
             persons.add(generateFullPerson());
         }
         return personMapper.personToFullPersonDTOList(persons);
-    }
-
-    private String generateCpr(String gender, LocalDate dob) {
-        return dataGenerator.generateCpr(gender, dob);
     }
 }

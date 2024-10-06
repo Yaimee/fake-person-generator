@@ -1,6 +1,5 @@
 package com.gitgudgang.fakeperson.domain.generator;
 
-import com.gitgudgang.fakeperson.domain.Address;
 import com.gitgudgang.fakeperson.entity.NameGender;
 import com.gitgudgang.fakeperson.repository.NameGenderRepository;
 import lombok.Getter;
@@ -80,10 +79,6 @@ public class PersonDataGenerator {
 
     public int generatePhoneNumber() {
         return 0; // TODO: Implement phone number generation
-    }
-
-    public Address generateAddress() {
-        return null; // TODO: Implement address generation
     }
 
     public Optional<NameGender> generatePersonBaseData() {
