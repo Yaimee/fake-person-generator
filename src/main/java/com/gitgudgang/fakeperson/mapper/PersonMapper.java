@@ -4,9 +4,12 @@ import com.gitgudgang.fakeperson.domain.Address;
 import com.gitgudgang.fakeperson.domain.Person;
 import org.mapstruct.Mapper;
 
+import java.time.LocalDate;
+import java.util.List;
+
 import static com.gitgudgang.fakeperson.dto.PersonDTO.*;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", imports = {LocalDate.class})
 public interface PersonMapper {
     CprDTO personToCprDTO(Person person);
 
@@ -23,4 +26,6 @@ public interface PersonMapper {
     PhoneDTO personToPhoneDTO(Person person);
 
     FullPersonDTO personToFullPersonDTO(Person person);
+
+    List<FullPersonDTO> personToFullPersonDTOList(List<Person> persons);
 }

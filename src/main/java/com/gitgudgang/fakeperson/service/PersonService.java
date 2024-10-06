@@ -12,7 +12,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import static com.gitgudgang.fakeperson.dto.PersonDTO.FullPersonDTO;
 import static com.gitgudgang.fakeperson.dto.PersonDTO.PartialPersonData;
@@ -56,20 +58,21 @@ public class PersonService {
                     personMapper.personToCprNameGenderDobDTO(generateFullPerson());
             case ADDRESS_DTO -> personMapper.addressToAddressDTO(dataGenerator.generateAddress());
             case PHONE_DTO -> personMapper.personToPhoneDTO(generateFullPerson());
+            case SINGLE_PERSON_DTO -> personMapper.personToFullPersonDTO(generateFullPerson());
             default -> throw new IllegalArgumentException("Unsupported DTO type: " + type);
         };
     }
 
     public List<FullPersonDTO> generatePersonList() {
         // random int between 2 and 100
+        var index = new Random().nextInt(2, 100);
+        var persons = new ArrayList<Person>();
 
-        // generateFullPerson() until list is full
-
-        // Convert List of Persons to DTOs
-
-        // Return dto list
-
-        return null;
+        // generateFullPerson() and map to dto until list is full
+        for (int i = 2; i < index; i++) {
+            persons.add(generateFullPerson());
+        }
+        return personMapper.personToFullPersonDTOList(persons);
     }
 
     private String generateCpr(String gender, LocalDate dob) {

@@ -4,6 +4,7 @@ import com.gitgudgang.fakeperson.dto.PersonDTO.FullPersonDTO;
 import com.gitgudgang.fakeperson.dto.PersonDTO.PartialPersonData;
 import com.gitgudgang.fakeperson.service.PersonService;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
 @RestController
@@ -22,6 +23,6 @@ public class PersonController {
 
     @GetMapping("/bulk")
     public List<FullPersonDTO> getBulkPersons(@RequestParam(defaultValue = "10") int count) {
-        return null;
+        return personService.generatePersonList();
     }
 }

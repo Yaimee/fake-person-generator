@@ -3,7 +3,7 @@ package com.gitgudgang.fakeperson.dto;
 public enum PersonDtoType {
     CPR_DTO("cpr"),
     FIRST_NAME_LAST_NAME_CPR_DTO("fname-lname-cpr"),
-    FIRST_NAME_LAST_NAME_CPR_DATE_OF_BIRTH_DTO("fname-lname-cpr"),
+    FIRST_NAME_LAST_NAME_CPR_DATE_OF_BIRTH_DTO("fname-lname-cpr-dob"),
     CPR_FIRST_NAME_LAST_NAME_GENDER_DTO("cpr-fname-lname-gender"),
     CPR_FIRST_NAME_LAST_NAME_GENDER_DATE_OF_BIRTH_DTO("cpr-fname-lname-gender-dob"),
     ADDRESS_DTO("address"),

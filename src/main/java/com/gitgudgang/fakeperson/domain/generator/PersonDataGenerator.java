@@ -6,7 +6,6 @@ import com.gitgudgang.fakeperson.repository.NameGenderRepository;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -26,12 +25,10 @@ public class PersonDataGenerator {
 
     private final Random random = new Random();
     private NameGenderRepository nameGenderRepository;
-    private ModelMapper modelMapper;
 
     @Autowired
-    public PersonDataGenerator(NameGenderRepository nameGenderRepository, ModelMapper modelMapper) {
+    public PersonDataGenerator(NameGenderRepository nameGenderRepository) {
         this.nameGenderRepository = nameGenderRepository;
-        this.modelMapper = modelMapper;
     }
 
     public String generateCpr(String gender, LocalDate dob) {
@@ -93,6 +90,5 @@ public class PersonDataGenerator {
         var index = random.nextInt(nameGenderRepository.getAllUUIDs().size());
         var id = nameGenderRepository.getAllUUIDs().get(index);
         return nameGenderRepository.findById(id);
-
     }
 }

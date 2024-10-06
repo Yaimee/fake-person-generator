@@ -1,6 +1,6 @@
 package com.gitgudgang.fakeperson.entity;
 
-import jakarta.persistence.Column;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
@@ -18,10 +18,10 @@ public class NameGender {
     @GeneratedValue
     private UUID id;
 
-    @Column(name = "name")
+    @JsonProperty("name")
     private String firstName;
 
-    @Column(name = "surname")
+    @JsonProperty("surname")
     private String lastName;
 
     private String gender;
