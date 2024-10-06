@@ -11,6 +11,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class PostalCodeTownLoader implements ApplicationRunner {
 
+    //TODO: Implement this class similarly to NameGenderLoader
+
     @Override
     public void run(ApplicationArguments args) throws Exception {
 

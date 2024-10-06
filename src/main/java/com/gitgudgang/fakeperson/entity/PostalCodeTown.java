@@ -15,4 +15,6 @@ public class PostalCodeTown {
     @Id
     @GeneratedValue
     private UUID id;
+    private int postalCode;
+    private String town;
 }

@@ -1,30 +1,45 @@
 package com.gitgudgang.fakeperson.domain.generator;
 
 import com.gitgudgang.fakeperson.domain.Address;
+import com.gitgudgang.fakeperson.entity.PostalCodeTown;
+import com.gitgudgang.fakeperson.repository.PostalCodeTownRepository;
 import com.github.javafaker.Faker;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 import java.util.UUID;
 
+@Getter
+@Setter
+@AllArgsConstructor
 @Service
 public class AddressGenerator {
-
-
+    private PostalCodeTownRepository postalCodeTownRepository;
     private final Faker faker = new Faker();
     private final Random rand = new Random();
 
     public Address generateAddress() {
-        //TODO: Refine by making floor and door optional
+        //var baseData = generateAddressBaseData().orElseThrow();
+        //TODO:Get dummy postalCode and town from actual data source
         var street = generateStreetName();
         var houseNumber = generateHouseNumber();
         var floor = generateFloor();
         var door = generateDoor();
-        var postalCode = rand.nextInt(1, 9999);
-        var town = faker.address().city();
+        var postalCode = faker.number().numberBetween(1000, 9999); //baseData.getPostalCode();
+        var town = faker.gameOfThrones().city(); //baseData.getTown();
 
         return new Address(UUID.randomUUID(), street, houseNumber, floor, door, postalCode, town);
+    }
+
+    private Optional<PostalCodeTown> generateAddressBaseData() {
+        var index = rand.nextInt(postalCodeTownRepository.findAll().size()); //TODO: Check for if db is empty
+        var id = postalCodeTownRepository.getAllUUIDs().get(index);
+        return postalCodeTownRepository.findById(id);
     }
 
     private String generateStreetName() {

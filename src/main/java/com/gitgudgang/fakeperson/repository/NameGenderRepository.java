@@ -11,7 +11,6 @@ import java.util.UUID;
 @Repository
 public interface NameGenderRepository extends JpaRepository<NameGender, UUID> {
 
-    // get list of all uuids, generate random number below list size, search db with that uuid
     @Query("SELECT ng.id FROM NameGender ng")
     List<UUID> getAllUUIDs();
 }
