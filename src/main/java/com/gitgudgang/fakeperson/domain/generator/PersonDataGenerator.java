@@ -1,20 +1,38 @@
 package com.gitgudgang.fakeperson.domain.generator;
 
 import com.gitgudgang.fakeperson.domain.Address;
-import com.gitgudgang.fakeperson.service.PersonService;
+import com.gitgudgang.fakeperson.entity.NameGender;
+import com.gitgudgang.fakeperson.repository.NameGenderRepository;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.Optional;
 import java.util.Random;
 
-import static com.gitgudgang.fakeperson.config.CPRConstants.CENTURY_CODE_1900;
-import static com.gitgudgang.fakeperson.config.CPRConstants.CENTURY_CODE_2000;
+import static com.gitgudgang.fakeperson.config.CPRConstants.*;
 
+
+@NoArgsConstructor
+@Getter
+@Setter
 @Service
 public class PersonDataGenerator {
-    private static final LocalDate EARLIEST_VALID_DATE = LocalDate.of(1924, 1, 1);
+
     private final Random random = new Random();
+    private NameGenderRepository nameGenderRepository;
+    private ModelMapper modelMapper;
+
+    @Autowired
+    public PersonDataGenerator(NameGenderRepository nameGenderRepository, ModelMapper modelMapper) {
+        this.nameGenderRepository = nameGenderRepository;
+        this.modelMapper = modelMapper;
+    }
 
     public String generateCpr(String gender, LocalDate dob) {
         if (!isValidDOB(dob)) {
@@ -71,7 +89,10 @@ public class PersonDataGenerator {
         return null; // TODO: Implement address generation
     }
 
-    public PersonService.PersonBaseData generatePersonBaseData() {
-        return null; // TODO: Implement person base data generation
+    public Optional<NameGender> generatePersonBaseData() {
+        var index = random.nextInt(nameGenderRepository.getAllUUIDs().size());
+        var id = nameGenderRepository.getAllUUIDs().get(index);
+        return nameGenderRepository.findById(id);
+
     }
 }

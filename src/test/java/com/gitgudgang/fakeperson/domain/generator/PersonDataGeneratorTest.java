@@ -38,7 +38,6 @@ class PersonDataGeneratorTest {
     @Test
     void centuryEncoding1900Lower_valid() {
         var cpr1900 = generator.generateCpr("female", EARLIEST_VALID_DATE);
-        System.out.println("cpr1900" + cpr1900);
         var centuryDigit = cpr1900.charAt(6) - '0';
         Assertions.assertTrue(CENTURY_CODE_1900.contains(centuryDigit));
     }
@@ -46,6 +45,8 @@ class PersonDataGeneratorTest {
     @Test
     void centuryEncoding1900Upper_valid() {
         var cpr1999 = generator.generateCpr("female", LocalDate.of(1999, 12, 31));
+        var centuryDigit = cpr1999.charAt(6) - '0';
+
     }
 
     @Test

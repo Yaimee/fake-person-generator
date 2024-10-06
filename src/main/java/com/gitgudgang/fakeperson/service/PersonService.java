@@ -4,42 +4,42 @@ import com.gitgudgang.fakeperson.domain.Address;
 import com.gitgudgang.fakeperson.domain.Person;
 import com.gitgudgang.fakeperson.domain.generator.PersonDataGenerator;
 import com.gitgudgang.fakeperson.dto.PersonDtoType;
-import lombok.AllArgsConstructor;
-import org.modelmapper.ModelMapper;
+import com.gitgudgang.fakeperson.entity.NameGender;
+import com.gitgudgang.fakeperson.mapper.PersonMapper;
+import lombok.Getter;
+import lombok.Setter;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
 
-import static com.gitgudgang.fakeperson.dto.PersonDTO.*;
+import static com.gitgudgang.fakeperson.dto.PersonDTO.FullPersonDTO;
+import static com.gitgudgang.fakeperson.dto.PersonDTO.PartialPersonData;
 
-@AllArgsConstructor
+@Getter
+@Setter
 @Service
 public class PersonService {
     private PersonDataGenerator dataGenerator;
-    private ModelMapper modelMapper;
+    private PersonMapper personMapper;
 
-    public PersonService() {
-        this.dataGenerator = new PersonDataGenerator();
-        this.modelMapper = new ModelMapper();
-    }
-
-    public record PersonBaseData(String firstName, String lastName, String gender) {}
-
-    private PersonBaseData generatePersonBaseData() {
-        return dataGenerator.generatePersonBaseData();
+    @Autowired
+    public PersonService(PersonDataGenerator dataGenerator, PersonMapper personMapper) {
+        this.dataGenerator = dataGenerator;
+        this.personMapper = personMapper;
     }
 
     private Person generateFullPerson() {
-        PersonBaseData baseData = generatePersonBaseData();
+        NameGender nameGender = dataGenerator.generatePersonBaseData().orElseThrow();
         var dob = dataGenerator.generateDateOfBirth();
 
         Person person = new Person();
-        person.setFirstName(baseData.firstName);
-        person.setLastName(baseData.lastName);
-        person.setGender(baseData.gender);
+        person.setFirstName(nameGender.getFirstName());
+        person.setLastName(nameGender.getLastName());
+        person.setGender(nameGender.getGender());
         person.setDateOfBirth(dob);
-        person.setCpr(generateCpr(baseData, dob));
+        person.setCpr(generateCpr(nameGender.getGender(), dob));
         person.setAddress(new Address()); //TODO: Make return actual address
         person.setPhoneNumber(dataGenerator.generatePhoneNumber());
 
@@ -47,16 +47,15 @@ public class PersonService {
     }
 
     public PartialPersonData generatePersonData(String type) {
-        return switch (PersonDtoType.valueOf(type.toUpperCase())) {
-            case CPR_DTO -> modelMapper.map(generateFullPerson(), PartialPersonData.class);
-            case FIRST_NAME_LAST_NAME_CPR_DTO -> modelMapper.map(generateFullPerson(), NameCprDTO.class);
-            case FIRST_NAME_LAST_NAME_CPR_DATE_OF_BIRTH_DTO ->
-                    modelMapper.map(generateFullPerson(), NameCprDobDTO.class);
-            case CPR_FIRST_NAME_LAST_NAME_GENDER_DTO -> modelMapper.map(generateFullPerson(), CprNameGenderDTO.class);
+        return switch (PersonDtoType.fromString(type.toLowerCase())) {
+            case CPR_DTO -> personMapper.personToCprDTO(generateFullPerson());
+            case FIRST_NAME_LAST_NAME_CPR_DTO -> personMapper.personToNameCprDTO(generateFullPerson());
+            case FIRST_NAME_LAST_NAME_CPR_DATE_OF_BIRTH_DTO -> personMapper.personToNameCprDobDTO(generateFullPerson());
+            case CPR_FIRST_NAME_LAST_NAME_GENDER_DTO -> personMapper.personToCprNameGenderDTO(generateFullPerson());
             case CPR_FIRST_NAME_LAST_NAME_GENDER_DATE_OF_BIRTH_DTO ->
-                    modelMapper.map(generateFullPerson(), CprNameGenderDobDTO.class);
-            case ADDRESS_DTO -> modelMapper.map(dataGenerator.generateAddress(), AddressDTO.class);
-            case PHONE_DTO -> modelMapper.map(dataGenerator.generatePhoneNumber(), PhoneDTO.class);
+                    personMapper.personToCprNameGenderDobDTO(generateFullPerson());
+            case ADDRESS_DTO -> personMapper.addressToAddressDTO(dataGenerator.generateAddress());
+            case PHONE_DTO -> personMapper.personToPhoneDTO(generateFullPerson());
             default -> throw new IllegalArgumentException("Unsupported DTO type: " + type);
         };
     }
@@ -73,7 +72,7 @@ public class PersonService {
         return null;
     }
 
-    private String generateCpr(PersonBaseData baseData, LocalDate dob) {
-        return dataGenerator.generateCpr(baseData.gender(), dob);
+    private String generateCpr(String gender, LocalDate dob) {
+        return dataGenerator.generateCpr(gender, dob);
     }
 }
