@@ -41,7 +41,7 @@ public class PersonDataGenerator {
     }
 
     private static boolean isValidDOB(LocalDate dob) {
-        return dob.isAfter(EARLIEST_VALID_DATE.minusDays(1)) && dob.isBefore(LocalDate.now());
+        return dob.isAfter(CPR_REGISTER_START_DATE.minusDays(1)) && dob.isBefore(LocalDate.now());
     }
 
     private String generateSequenceNumber(String gender, LocalDate dob) {
@@ -60,8 +60,8 @@ public class PersonDataGenerator {
     private int generateFirstDigitOfSequence(LocalDate dob) {
         int century = dob.getYear() / 100;
         return switch (century) {
-            case 19 -> CENTURY_CODE_1900.get(random.nextInt(CENTURY_CODE_1900.size()));
-            case 20 -> CENTURY_CODE_2000.get(random.nextInt(CENTURY_CODE_2000.size()));
+            case 19 -> CENTURY_CODES_1900.get(random.nextInt(CENTURY_CODES_1900.size()));
+            case 20 -> CENTURY_CODES_2000.get(random.nextInt(CENTURY_CODES_2000.size()));
             default -> throw new IllegalArgumentException("Unsupported century");
         };
     }
@@ -72,7 +72,7 @@ public class PersonDataGenerator {
     }
 
     public LocalDate generateDateOfBirth() {
-        var minDay = EARLIEST_VALID_DATE.toEpochDay();
+        var minDay = CPR_REGISTER_START_DATE.toEpochDay();
         var maxDay = LocalDate.now().toEpochDay();
         return LocalDate.ofEpochDay(minDay + random.nextLong(maxDay - minDay + 1));
     }

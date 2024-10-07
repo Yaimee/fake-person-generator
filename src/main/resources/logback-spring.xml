@@ -28,8 +28,8 @@
     </appender>
 
     <!-- Custom logger configurations -->
-    <logger name="org.springframework" level="DEBUG"/>
-    <logger name="org.springframework.beans.factory.support" level="DEBUG"/>
+    <logger name="org.springframework" level="INFO"/>
+    <logger name="org.springframework.beans.factory.support" level="INFO"/>
     <logger name="org.springframework.security" level="INFO"/>
     <logger name="org.springframework.boot.autoconfigure" level="INFO"/>
     <logger name="org.springframework.web.filter" level="INFO"/>

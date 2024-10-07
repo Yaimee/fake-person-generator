@@ -6,27 +6,35 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Component;
 
-import java.net.URI;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 @AllArgsConstructor
 @Slf4j
 @Component
 public class NameGenderLoader implements ApplicationRunner {
-
+    private final ResourceLoader resourceLoader;
     private final ObjectMapper objectMapper;
     private final NameGenderRepository repository;
-    private final String filePath = "classpath:person-names.json";
+    private static final String filePath = "classpath:person-names.json";
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
-
         log.info("Loading names and gender");
 
-        NameGenderListWrapper wrapper = objectMapper.readValue(new URI(filePath).toURL(), NameGenderListWrapper.class);
-
+        NameGenderListWrapper wrapper = objectMapper.readValue(readJson(), NameGenderListWrapper.class);
         repository.saveAll(wrapper.getEntries());
+
         log.info("Loaded {} names and gender", wrapper.getEntries().size());
     }
+
+    private String readJson() throws IOException {
+        Resource resource = resourceLoader.getResource(NameGenderLoader.filePath);
+        return resource.getContentAsString(StandardCharsets.UTF_8);
+    }
 }
+

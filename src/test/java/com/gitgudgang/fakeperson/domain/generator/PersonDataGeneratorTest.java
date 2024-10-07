@@ -2,22 +2,28 @@ package com.gitgudgang.fakeperson.domain.generator;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.time.LocalDate;
+import java.util.List;
+import java.util.stream.Stream;
 
-import static com.gitgudgang.fakeperson.config.CPRConstants.CENTURY_CODE_1900;
-import static com.gitgudgang.fakeperson.config.CPRConstants.EARLIEST_VALID_DATE;
+import static com.gitgudgang.fakeperson.config.CPRConstants.*;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class PersonDataGeneratorTest {
     PersonDataGenerator generator = new PersonDataGenerator();
-    LocalDate yesterday = LocalDate.now().minusDays(1);
-    final LocalDate CPR_REGISTER_START_DATE = LocalDate.of(1924, 1, 1);
+    static LocalDate yesterday = LocalDate.now().minusDays(1);
+    String validFemaleCpr = generator.generateCpr("female", VALID_DOB);
+    String validMaleCpr = generator.generateCpr("male", VALID_DOB);
 
+    // Examples of tests that only encompass one case
     @Test
     void dob_validUpperBoundary() {
-        assertDoesNotThrow(() -> generator.generateCpr("female", yesterday));
+        assertDoesNotThrow(() -> validFemaleCpr);
     }
 
     @Test
@@ -36,37 +42,48 @@ class PersonDataGeneratorTest {
     }
 
     @Test
-    void centuryEncoding1900Lower_valid() {
-        var cpr1900 = generator.generateCpr("female", EARLIEST_VALID_DATE);
-        var centuryDigit = cpr1900.charAt(6) - '0';
-        Assertions.assertTrue(CENTURY_CODE_1900.contains(centuryDigit));
+    void genderDigitFemale_valid() {
+        var genderDigit = validFemaleCpr.charAt(9) - '0';
+        Assertions.assertTrue(GENDER_CODES_FEMALE.contains(genderDigit));
     }
 
     @Test
-    void centuryEncoding1900Upper_valid() {
-        var cpr1999 = generator.generateCpr("female", LocalDate.of(1999, 12, 31));
-        var centuryDigit = cpr1999.charAt(6) - '0';
-
+    void genderDigitMale_valid() {
+        var genderDigit = validMaleCpr.charAt(9) - '0';
+        Assertions.assertTrue(GENDER_CODES_MALE.contains(genderDigit));
     }
 
     @Test
-    void centuryEncoding2000Lower_valid() {
-
+    void cprLength_valid() {
+        Assertions.assertEquals(10, validFemaleCpr.length());
     }
 
     @Test
-    void centuryEncoding2000Upper_valid() {
-        // can't be after today
+    void cprOnlyNumbers_valid() {
+        assertDoesNotThrow(() -> Integer.parseInt(validFemaleCpr));
     }
 
-    @Test
-    void centuryEncoding1900_invalid() {
-        // before start of cpr register
+    // Examples of parameterized tests
+    @ParameterizedTest
+    @MethodSource("centuryEncodingTestCases_valid")
+    void centuryEncoding_valid(LocalDate testDate, List<Integer> expectedCodes) {
+        testCenturyEncoding(testDate, expectedCodes);
     }
 
-    @Test
-    void centuryEncoding2000_invalid() {
-
+    private void testCenturyEncoding(LocalDate testDate, List<Integer> centuryCodes) {
+        var cpr = generator.generateCpr("female", testDate);
+        var centuryDigit = cpr.charAt(6) - '0';
+        Assertions.assertTrue(centuryCodes.contains(centuryDigit));
     }
 
+    private static Stream<Arguments> centuryEncodingTestCases_valid() {
+        return Stream.of(
+                Arguments.of(CPR_REGISTER_START_DATE, CENTURY_CODES_1900),
+                Arguments.of(LocalDate.of(1960, 6, 15), CENTURY_CODES_1900),
+                Arguments.of(LocalDate.of(1999, 12, 31), CENTURY_CODES_1900),
+                Arguments.of(LocalDate.of(2000, 1, 1), CENTURY_CODES_2000),
+                Arguments.of(LocalDate.of(2010, 12, 31), CENTURY_CODES_2000),
+                Arguments.of(yesterday, CENTURY_CODES_2000)
+        );
+    }
 }

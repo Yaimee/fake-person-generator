@@ -5,6 +5,7 @@ import com.gitgudgang.fakeperson.domain.generator.AddressGenerator;
 import com.gitgudgang.fakeperson.domain.generator.PersonDataGenerator;
 import com.gitgudgang.fakeperson.dto.PersonDtoType;
 import com.gitgudgang.fakeperson.entity.NameGender;
+import com.gitgudgang.fakeperson.exception.EndpointNotFoundException;
 import com.gitgudgang.fakeperson.mapper.PersonMapper;
 import lombok.Getter;
 import lombok.Setter;
@@ -50,7 +51,7 @@ public class PersonService {
     }
 
     public PartialPersonData generatePersonData(String type) {
-        return switch (PersonDtoType.fromString(type.toLowerCase())) {
+        return switch (matchEndpoint(type)) {
             case CPR_DTO -> personMapper.personToCprDTO(generateFullPerson());
             case FIRST_NAME_LAST_NAME_CPR_DTO -> personMapper.personToNameCprDTO(generateFullPerson());
             case FIRST_NAME_LAST_NAME_CPR_DATE_OF_BIRTH_DTO -> personMapper.personToNameCprDobDTO(generateFullPerson());
@@ -60,15 +61,23 @@ public class PersonService {
             case ADDRESS_DTO -> personMapper.addressToAddressDTO(generateFullPerson().getAddress());
             case PHONE_DTO -> personMapper.personToPhoneDTO(generateFullPerson());
             case SINGLE_PERSON_DTO -> personMapper.personToFullPersonDTO(generateFullPerson());
-            default -> throw new IllegalArgumentException("Unsupported DTO type: " + type);
+            default -> throw new EndpointNotFoundException("Unsupported DTO type: " + type);
         };
+    }
+
+    private static PersonDtoType matchEndpoint(String type) {
+        try {
+            return PersonDtoType.fromString(type.toLowerCase());
+        } catch (IllegalArgumentException e) {
+            throw new EndpointNotFoundException("Not Found", e);
+        }
     }
 
     public List<FullPersonDTO> generatePersonList() {
         var index = new Random().nextInt(2, 100);
         var persons = new ArrayList<Person>();
 
-        for (int i = 2; i < index; i++) {
+        for (int i = 0; i < index; i++) {
             persons.add(generateFullPerson());
         }
         return personMapper.personToFullPersonDTOList(persons);
