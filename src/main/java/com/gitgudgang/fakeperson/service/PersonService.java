@@ -3,6 +3,7 @@ package com.gitgudgang.fakeperson.service;
 import com.gitgudgang.fakeperson.domain.Person;
 import com.gitgudgang.fakeperson.domain.generator.AddressGenerator;
 import com.gitgudgang.fakeperson.domain.generator.PersonDataGenerator;
+import com.gitgudgang.fakeperson.domain.generator.PhoneNumberGenerator;
 import com.gitgudgang.fakeperson.dto.PersonDtoType;
 import com.gitgudgang.fakeperson.entity.NameGender;
 import com.gitgudgang.fakeperson.exception.EndpointNotFoundException;
@@ -25,12 +26,14 @@ import static com.gitgudgang.fakeperson.dto.PersonDTO.PartialPersonData;
 public class PersonService {
     private PersonDataGenerator personGenerator;
     private AddressGenerator addressGenerator;
+    private PhoneNumberGenerator phoneNumberGenerator;
     private PersonMapper personMapper;
 
     @Autowired
-    public PersonService(PersonDataGenerator personGenerator, AddressGenerator addressGenerator, PersonMapper personMapper) {
+    public PersonService(PersonDataGenerator personGenerator, AddressGenerator addressGenerator, PhoneNumberGenerator phoneNumberGenerator, PersonMapper personMapper) {
         this.personGenerator = personGenerator;
         this.addressGenerator = addressGenerator;
+        this.phoneNumberGenerator = phoneNumberGenerator;
         this.personMapper = personMapper;
     }
 
@@ -45,7 +48,7 @@ public class PersonService {
         person.setDateOfBirth(dob);
         person.setCpr(personGenerator.generateCpr(nameGender.getGender(), dob));
         person.setAddress(addressGenerator.generateAddress());
-        person.setPhoneNumber(personGenerator.generatePhoneNumber()); //TODO: Make return actual phone number
+        person.setPhoneNumber(phoneNumberGenerator.generatePhoneNumber()); //TODO: Make return actual phone number
 
         return person;
     }

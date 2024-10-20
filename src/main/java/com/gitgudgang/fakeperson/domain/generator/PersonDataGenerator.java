@@ -77,10 +77,6 @@ public class PersonDataGenerator {
         return LocalDate.ofEpochDay(minDay + random.nextLong(maxDay - minDay + 1));
     }
 
-    public int generatePhoneNumber() {
-        return 0; // TODO: Implement phone number generation
-    }
-
     public Optional<NameGender> generatePersonBaseData() {
         var index = random.nextInt(nameGenderRepository.getAllUUIDs().size());
         var id = nameGenderRepository.getAllUUIDs().get(index);
